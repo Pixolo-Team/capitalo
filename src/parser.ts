@@ -21,12 +21,11 @@ export class Parser {
     }
   }
 
-  /** Find and edit multiline comments */
-  public findComments(activeEditor: vscode.TextEditor): void {
+  /** Find and edit comments, capitalizing them */
+  public findAndCapitalizeComments(activeEditor: vscode.TextEditor): void {
     let text = activeEditor.document.getText();
     let uri = activeEditor.document.uri;
     let languageCode = activeEditor.document.languageId;
-    let regEx: RegExp;
 
     // Set the delimiter based on the language code
     if (!this.setDelimiter(languageCode)) {
@@ -34,56 +33,32 @@ export class Parser {
       return;
     }
 
-    // Create regular expression to match both single-line and multi-line comments
-    regEx = new RegExp(`(?:${this.delimiters.join("|")})\\s.*`, "g");
+    // Regular expression to match single-line comments (//)
+    const singleLineRegex = /\/\/(.*)/g;
 
-    let match: any;
+    // Regular expression to match multi-line comments (/* */ or /** */)
+    const multiLineRegex = /\/\*(.*?)\*\//gs;
 
-    while ((match = regEx.exec(text))) {
-      // Get the start position of the comment
-      let startPos = activeEditor.document.positionAt(match.index);
-
-      // Get the end position of the comment
-      let endPos = activeEditor.document.positionAt(
-        match.index + match[0].length
-      );
-
-      // Set the range
-      let range = new vscode.Range(startPos, endPos);
-      let delimiter = match[0].match(
-        new RegExp(`^(${this.delimiters.join("|")})`)
-      )[1];
-      let newText = this.fixComment(
-        activeEditor.document.getText(range),
-        delimiter
-      );
-      this.edit.replace(uri, range, newText);
-    }
-  }
-
-  /** Make the fixes you want to make to the Comment */
-  private fixComment(comment: string, delimiter: string): string {
-    // Remove the delimiter from the comment
-    comment = comment.replace(new RegExp(`^${delimiter}\\s*`), "");
-
-    // Capitalize the first letter of the comment string
-    comment = comment.charAt(0).toUpperCase() + comment.slice(1);
-
-    // Create a new array to hold the new comment
-    let newComment: string[] = [];
-
-    // Split the comment into words and iterate over them
-    comment.split(" ").forEach((word) => {
-      // If the word is a noun, capitalize the first letter
-      if (checkNoun(word)) {
-        word = word.charAt(0).toUpperCase() + word.slice(1);
-      }
-      // Add the word to the new comment array
-      newComment.push(word);
+    // Replace single-line comments
+    text = text.replace(singleLineRegex, (match, group) => {
+      const capitalized =
+        group.trim().charAt(0).toUpperCase() + group.trim().slice(1);
+      return `// ${capitalized}`;
     });
 
-    // Join the new comment array into a string and return it
-    return `${delimiter} ${newComment.join(" ")}`;
+    // Replace multi-line comments
+    text = text.replace(multiLineRegex, (match, group) => {
+      const capitalized =
+        group.trim().charAt(0).toUpperCase() + group.trim().slice(1);
+      return `/* ${capitalized} */`;
+    });
+
+    // Update the document with the capitalized comments
+    this.edit.replace(
+      uri,
+      new vscode.Range(0, 0, activeEditor.document.lineCount, 0),
+      text
+    );
   }
 
   private setDelimiter(languageCode: string): boolean {

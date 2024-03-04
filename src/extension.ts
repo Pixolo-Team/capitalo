@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (vscode.window.activeTextEditor) {
         const activeEditor = vscode.window.activeTextEditor;
         parser.SetRegex(activeEditor, activeEditor.document.languageId);
-        parser.findComments(activeEditor);
+        parser.findAndCapitalizeComments(activeEditor);
         vscode.workspace.applyEdit(parser.edit).then((success) => {
           if (success) {
             vscode.window.showInformationMessage(
