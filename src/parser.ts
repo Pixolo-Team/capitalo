@@ -66,8 +66,6 @@ export class Parser {
     // Remove the delimiter from the comment
     comment = comment.replace(new RegExp(`^${delimiter}\\s*`), "");
 
-    console.log(delimiter, "heh", comment.charAt(0), comment);
-
     // Capitalize the first letter of the comment string
     comment = comment.charAt(0).toUpperCase() + comment.slice(1);
 
