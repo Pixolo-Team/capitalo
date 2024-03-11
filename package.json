@@ -1,21 +1,41 @@
 {
-  "name": "capitalizenounincomments",
-  "displayName": "CapitalizeNounInComments",
-  "description": "",
+  "name": "capitalo",
+  "displayName": "capitalo",
+  "description": "Improve code documentation clarity and consistency with Capitalo - Pixolo's Capitalization Tool for VS Code. Automatically capitalize nouns in comments and ensure every comment starts with a capital letter.",
   "version": "0.0.1",
+  "publisher": "Pixolo",
+  "author": "Pixolo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pixolo-Team/capitalo"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Pixolo-Team/capitalo/issues"
+  },
   "engines": {
     "vscode": "^1.86.0"
   },
   "categories": [
-    "Other"
+    "Formatters"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "icon": "icon.jpg",
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "capitalizenounincomments.helloWorld",
-        "title": "Hello World"
+        "command": "capitalo",
+        "title": "Capitalo - Pixolo's Capitalization Tool for VS Code"
+      }
+    ],
+    "keybindings": [
+      {
+        "when": "editorTextFocus && !editorReadonly",
+        "command": "capitalo",
+        "key": "alt+s"
       }
     ]
   },
@@ -37,12 +57,5 @@
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.56.0",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "compromise": "^14.11.2",
-    "natural": "^6.10.4",
-    "wordnet": "^2.0.0",
-    "wordnet-db": "^3.1.14",
-    "wordpos": "^2.1.0"
   }
 }
